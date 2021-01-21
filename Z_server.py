@@ -1,7 +1,6 @@
 import socket
 import threading
 
-HEADER = 15
 MSG_BYTE = 64
 
 SERVER = socket.gethostbyname(socket.gethostname())
@@ -13,6 +12,7 @@ DISCONNECT_MESSAGE = "!DISCONNECT"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
+# socket.socket().listen(5)   # 5 connections are kept waiting if the server is busy and if a 6th socket trys to connect then the connection is refused.
 
 def handler_client(conn, addr):
     print(f"[NEW CONNECTION]: {addr} connected.")
