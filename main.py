@@ -1,21 +1,28 @@
 import socket
-import sys
+import threading
 
-s = socket.socket()
-try:
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-except socket.error as err:
-    print(f"Socket creation failed with error: {err}")
+HOST = socket.gethostbyname(socket.gethostname())
+PORT = 1234
 
-# Default port for socket
-port = 80
+SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-try:
-    host_ip = socket.gethostbyname("www.google.com")
-except socket.gaierror as err:
-    print(f"There was an error resolving the host. Error: {err}")
-    sys.exit()
 
-# Connection
-s.connect((host_ip, port))  # This must in pair parenthesis
+def handler_client(conn, addr):
+    print(f"[NEW CONNECTION]: {addr} connected.")
+    
+    connected = True
+    while connected:
+        data = conn.recv(1024).decode('utf-8')
+        
 
+if __name__ == "__main__":
+    with SERVER as s:
+        print("[STARTING]: Server is starting...")
+        s.bind((HOST, PORT))
+        s.listen(5)  # 5 connections are kept waiting if the server is busy and if a 6th socket trys to connect then the connection is refused.
+        print(f"[LISTENING]: Server is listening on {HOST}")
+        
+        while True:
+            conn, addr = s.accept()
+            threading.Thread(target=handler_client, args=(conn, addr)).start()
+            print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")

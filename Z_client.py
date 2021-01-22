@@ -3,15 +3,14 @@ import socket
 HEADER = 15
 MSG_BYTE = 64
 
-SERVER = socket.gethostbyname(socket.gethostname())
+HOST = socket.gethostbyname(socket.gethostname())
 PORT = 1234
-ADDR = (SERVER, PORT)
 
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(ADDR)
+client.connect((HOST, PORT))
 
 def send(msg):
     message = msg.encode(FORMAT)
