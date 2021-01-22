@@ -9,7 +9,7 @@ while True:
     full_msg = ""
     new_msg = True
     while True:
-        msg = s.recv(16)  # receive data from the server
+        msg = s.recv(1024)  # receive data from the server
         if new_msg:
             print(f"New message length: {msg[:HEADERSIZE]}")
             msglen = int(msg[:HEADERSIZE])

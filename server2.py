@@ -1,5 +1,4 @@
-import socket
-import threading
+import socket, threading
 
 HOST = socket.gethostbyname(socket.gethostname())
 PORT = 1234

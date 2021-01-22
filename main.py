@@ -1,5 +1,4 @@
-import socket
-import threading
+import socket, threading, time
 
 HOST = socket.gethostbyname(socket.gethostname())
 PORT = 1234
@@ -10,18 +9,18 @@ SERVER.bind((HOST, PORT))
 def handler_client(conn, addr):
     print(f"[NEW CONNECTION]: {addr} connected.")
     
-    connected = True
-    while connected:
+    while True:
         data = conn.recv(1024).decode('utf-8')
+        
+        if data:
+            data = int(data)
+            msg = conn.recv(data).decode('utf-8')
 
-        if not data:
+            print(f"[{addr}]:{msg}")
+            conn.send(data.encode('utf-8'))
+
+        else:
             break
-
-        data = int(data)
-        msg = conn.recv(data).decode('utf-8')
-
-        print(f"[{addr}]:{msg}")
-        conn.send(data.encode('utf-8'))
 
     conn.close()
 
@@ -35,3 +34,4 @@ if __name__ == "__main__":
         conn, addr = SERVER.accept()
         threading.Thread(target=handler_client, args=(conn, addr)).start()
         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
+        time.sleep(3)
