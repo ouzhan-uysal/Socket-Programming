@@ -36,4 +36,3 @@ if __name__ == "__main__":
         conn, addr = SERVER.accept()
         threading.Thread(target=handler_client, args=(conn, addr)).start()
         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
-        time.sleep(3)
