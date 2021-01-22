@@ -10,20 +10,22 @@ def handler_client(conn, addr):
     print(f"[NEW CONNECTION]: {addr} connected.")
     
     while True:
-        data = conn.recv(1024).decode('utf-8')
-        
-        if data:
-            data = int(data)
-            msg = conn.recv(data).decode('utf-8')
+        try:
+            data = conn.recv(1024).decode('utf-8')
+            if data:
+                data = int(data)
+                msg = conn.recv(data).decode('utf-8')
 
-            print(f"[{addr}]:{msg}")
-            conn.send(data.encode('utf-8'))
+                print(f"[{addr}]:{msg}")
+                conn.send(data.encode('utf-8'))
+            else:
+                break
 
-        else:
+        except ConnectionResetError as err:
+            print(f"[DISCONNECT]: {addr}")
             break
 
     conn.close()
-
 
 
 if __name__ == "__main__":
