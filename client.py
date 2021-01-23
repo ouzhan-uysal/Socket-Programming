@@ -6,7 +6,7 @@ s = socket.socket()
 s.connect((socket.gethostname(), 1234)) # First Parameter: localhost, Second Parameter: port
 
 while True:
-    full_msg = ""
+    full_msg = "jamiryoo"
     new_msg = True
     while True:
         msg = s.recv(1024)  # receive data from the server

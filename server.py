@@ -23,6 +23,7 @@ def handler_client(conn, addr):
 
         except ConnectionResetError as err:
             print(f"[DISCONNECT]: {addr} disconnected.")
+            print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}")
             break
 
     conn.close()
