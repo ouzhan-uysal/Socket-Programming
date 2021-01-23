@@ -22,7 +22,7 @@ def handler_client(conn, addr):
                 break
 
         except ConnectionResetError as err:
-            print(f"[DISCONNECT]: {addr}")
+            print(f"[DISCONNECT]: {addr} disconnected.")
             break
 
     conn.close()
