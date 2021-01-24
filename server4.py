@@ -1,32 +1,32 @@
 # multi threading tcp file transfer
 
 import socket
-from threading import Thread
+import threading
 
 TCP_IP = socket.gethostbyname(socket.gethostname())
 TCP_PORT = 9001
 BUFFER_SIZE = 1024
 
 class ClientThread(Thread):
-    def __init__(self, ip, port, sock):
-        Thread.__init__(self)
-        self.ip = ip
-        self.port = port
-        self.sock = sock
-        print("New thread started for " + ip + ":" + str(port))
+    def __init__(self, IP, PORT, SOCK):
+        threading.Thread.__init__(self)
+        self.IP = IP
+        self.PORT = PORT
+        self.SOCK = SOCK
+        print("New thread started for " + IP + ":" + str(PORT))
 
     def run(self):
         filename='ServerAccessKey.json'
-        f = open(filename,'rb')
+        f = open(filename, 'rb')
         while True:
-            l = f.read(BUFFER_SIZE)
-            while (l):
-                self.sock.send(l)
-                #print('Sent ',repr(l))
-                l = f.read(BUFFER_SIZE)
-            if not l:
+            data = f.read(BUFFER_SIZE)
+            while (data):
+                self.SOCK.send(data)
+                #print('Sent ',repr(data))
+                data = f.read(BUFFER_SIZE)
+            if not data:
                 f.close()
-                self.sock.close()
+                self.SOCK.close()
                 break
 
 tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,9 +37,9 @@ threads = []
 while True:
     tcpsock.listen(5)
     print("Waiting for incoming connections...")
-    (conn, (ip,port)) = tcpsock.accept()
-    print('Got connection from ', (ip, port))
-    newthread = ClientThread(ip, port, conn)
+    (CONN, (IP,PORT)) = tcpsock.accept()
+    print('Got connection from ', (IP, PORT))
+    newthread = ClientThread(IP, PORT, CONN)
     newthread.start()
     threads.append(newthread)
 
