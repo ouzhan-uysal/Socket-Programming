@@ -3,7 +3,7 @@ import socket
 HEADERSIZE = 10
 
 s = socket.socket()
-s.connect((socket.gethostname(), 1234)) # First Parameter: localhost, Second Parameter: port
+s.connect((socket.gethostname(), 9001)) # First Parameter: localhost, Second Parameter: port
 
 while True:
     full_msg = "jamiryoo"

@@ -1,14 +1,14 @@
 import socket
 
-host = socket.gethostbyname(socket.gethostname())
-port = 12345
+HOST = socket.gethostbyname(socket.gethostname())
+PORT = 12345
 
 try:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print("socket oluşturuldu")
 
-    s.bind((host, port)) 
-    print("socket {} nolu porta bağlandı".format(port))
+    s.bind((HOST, PORT)) 
+    print("socket {} nolu porta bağlandı".format(PORT))
 
     s.listen(5)      
     print("socket dinleniyor")

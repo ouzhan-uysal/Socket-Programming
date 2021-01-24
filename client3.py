@@ -3,7 +3,7 @@ import socket                   # Import socket module
 s = socket.socket()             # Create a socket object
 host = socket.gethostbyname(socket.gethostname())     # Get local machine name
 print(host)
-port = 60000                    # Reserve a port for your service.
+port = 9001                    # Reserve a port for your service.
 
 s.connect((host, port))
 s.send("Hello server!".encode('utf-8'))

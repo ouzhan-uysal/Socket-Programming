@@ -5,7 +5,7 @@ s = socket.socket()
 
 # Bağlanılacak adres ve port
 host = socket.gethostbyname(socket.gethostname())
-port = 12345
+port = 9001
 
 try:
     # Bağlantıyı yap
@@ -16,7 +16,7 @@ try:
     print(yanit.decode("utf-8"))
 
     # bağlantıyı kapat
-    s.close() 
+    s.close()
     
 except socket.error as msg:
     print("[Server aktif değil.] Mesaj:", msg)
