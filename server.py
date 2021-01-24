@@ -2,6 +2,7 @@ import socket, threading, time
 
 HOST = socket.gethostbyname(socket.gethostname())
 PORT = 1234
+BUFFER_SIZE = 1024
 
 SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 SERVER.bind((HOST, PORT))
@@ -11,7 +12,7 @@ def handler_client(conn, addr):
     
     while True:
         try:
-            data = conn.recv(1024).decode('utf-8')
+            data = conn.recv(BUFFER_SIZE)
             if data:
                 data = int(data)
                 msg = conn.recv(data).decode('utf-8')
@@ -31,7 +32,7 @@ def handler_client(conn, addr):
 
 if __name__ == "__main__":
     print("[STARTING]: Server is starting...")
-    SERVER.listen(5)    # 5 connections are kept waiting if the server is busy and if a 6th socket trys to connect then the connection is refused.
+    SERVER.listen(5)
     print(f"[LISTENING]: Server is listening on {HOST}")
     while True:
         conn, addr = SERVER.accept()
