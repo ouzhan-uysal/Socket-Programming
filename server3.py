@@ -26,7 +26,7 @@ class ClientThread(threading.Thread):
         f = open(filename, 'rb')
         while True:
             data = f.read(BUFFER_SIZE)
-            while (data):
+            while data:
                 self.SOCK.send(data)
                 #print('Sent ',repr(data))
                 data = f.read(BUFFER_SIZE)
@@ -89,4 +89,14 @@ class TCP_SERVER(threading.Thread):
         print(f"[NEW CONNECTION]: Got connection from {addr}")
 
     def checkFile(self):
-        pass
+        filename='ServerAccessKey.json'
+        f = open(filename, 'rb')
+        while True:
+            data = f.read(BUFFER_SIZE)
+            while data:
+                self.SOCK.send(data)
+                data = f.read(BUFFER_SIZE)
+            if not data:
+                f.close()
+                self.SOCK.close()
+                break
