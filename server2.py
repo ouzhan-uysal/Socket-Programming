@@ -1,7 +1,7 @@
 import socket
 
 HOST = socket.gethostbyname(socket.gethostname())
-PORT = 12345
+PORT = 9001
 
 try:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

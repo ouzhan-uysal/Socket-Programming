@@ -1,7 +1,7 @@
 import socket, threading, time
 
 HOST = socket.gethostbyname(socket.gethostname())
-PORT = 1234
+PORT = 9001
 BUFFER_SIZE = 1024
 
 SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

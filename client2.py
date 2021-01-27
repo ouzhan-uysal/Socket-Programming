@@ -1,21 +1,19 @@
 import socket                
 
-# Socket oluşturulması
 s = socket.socket()          
 
-# Bağlanılacak adres ve port
 host = socket.gethostbyname(socket.gethostname())
 port = 9001
 
 try:
-    # Bağlantıyı yap
-    s.connect((host, port)) 
+    s.connect((host, port))
+except ConnectionRefusedError as err:
+    print(f"Server aktif değil. Error: {err}")
 
-    # serverden yanıtı al
+try:
     yanit = s.recv(1024)
     print(yanit.decode("utf-8"))
 
-    # bağlantıyı kapat
     s.close()
     
 except socket.error as msg:

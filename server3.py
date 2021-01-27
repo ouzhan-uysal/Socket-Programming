@@ -2,7 +2,7 @@
 
 import socket
 
-PORT = 60000
+PORT = 9001
 s = socket.socket()
 HOST = socket.gethostbyname(socket.gethostname())
 s.bind((HOST, PORT))
