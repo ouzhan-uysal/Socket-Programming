@@ -7,7 +7,7 @@ TCP_IP = socket.gethostbyname(socket.gethostname())
 TCP_PORT = 9001
 BUFFER_SIZE = 1024
 
-class ClientThread(Thread):
+class ClientThread(threading.Thread):
     def __init__(self, IP, PORT, SOCK):
         threading.Thread.__init__(self)
         self.IP = IP

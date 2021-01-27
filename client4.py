@@ -30,18 +30,19 @@ def createFile():
     print('connection closed')
 
 def doNothing():
+    print("boooş")
     sys.exit(0)
 
 if __name__ == "__main__":
     while True:
-        i = input("Enter the action you want to take: \n 1. Check File \n 2. Do Nothing \n Chooise: ")
-        if i == 1:
+        chooise = input("Enter the action you want to take: \n 1. Check File \n 2. Do Nothing \n Chooise: ")
+        if chooise == '1':
             createFile()
             break
-        elif i == 2:
+        elif chooise == '2':
             doNothing()
             break
-        elif i == 'q':
+        elif chooise == 'q':
             sys.exit(0)
         else:
             print("Choose one of the actions shown. Or press 'q' to exit.")

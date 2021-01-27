@@ -31,10 +31,10 @@ def handler_client(conn, addr):
 
 
 if __name__ == "__main__":
-    print("[STARTING]: Server is starting...")
-    SERVER.listen(5)
-    print(f"[LISTENING]: Server is listening on {HOST}")
     while True:
+        print("[STARTING]: Server is starting...")
+        SERVER.listen(5)
+        print(f"[LISTENING]: Server is listening on {HOST}")
         conn, addr = SERVER.accept()
         threading.Thread(target=handler_client, args=(conn, addr)).start()
         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
