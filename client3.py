@@ -34,7 +34,7 @@ def doNothing():
 
 if __name__ == "__main__":
     while True:
-        chooise = input("Enter the action you want to take: \n 1. Check File \n 2. Do Nothing \n Chooise: ")
+        chooise = input("Enter the action you want to take or press 'q' to exit.: \n 1. Check File \n 2. Do Nothing \n Chooise: ")
         if chooise == '1':
             createFile()
             break
