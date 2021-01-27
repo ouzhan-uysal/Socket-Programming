@@ -1,12 +1,14 @@
-import socket
+import socket, sys
 
 HEADERSIZE = 10
 
 s = socket.socket()
+
 try:
     s.connect((socket.gethostname(), 9001))
 except socket.error as err:
     print(f"Server aktif değil. Error: {err}")
+    sys.exit(0)
 
 while True:
     full_msg = "jamiryoo"

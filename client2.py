@@ -1,11 +1,16 @@
-import socket
+import socket, sys
 
 s = socket.socket()
 host = socket.gethostbyname(socket.gethostname())
 print(host)
 port = 9001
 
-s.connect((host, port))
+try:
+    s.connect((host, port))
+except socket.err as err:
+    print(f"Server aktif değil. Error: {err}")
+    sys.exit(0)
+
 s.send("Hello server!".encode('utf-8'))
 
 with open('received_file.json', 'wb') as f:
