@@ -1,11 +1,11 @@
 # Sunucuya Dosya gönderme
 
-import socket                   # Import socket module
+import socket
 
-PORT = 60000                    # Reserve a port for your service.
-s = socket.socket()             # Create a socket object
-HOST = socket.gethostbyname(socket.gethostname())     # Get local machine name
-s.bind((HOST, PORT))            # Bind to the port
+PORT = 60000
+s = socket.socket()
+HOST = socket.gethostbyname(socket.gethostname())
+s.bind((HOST, PORT))
 s.listen(5)                     # Now wait for client connection.
 
 print('Server listening....')
