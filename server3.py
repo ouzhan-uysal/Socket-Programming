@@ -1,30 +1,47 @@
-# Sunucuya Dosya gönderme
+# multi threading tcp file transfer
 
 import socket
+import threading
 
-PORT = 9001
-s = socket.socket()
-HOST = socket.gethostbyname(socket.gethostname())
-s.bind((HOST, PORT))
-s.listen(5)                     # Now wait for client connection.
+TCP_IP = socket.gethostbyname(socket.gethostname())
+TCP_PORT = 9001
+BUFFER_SIZE = 1024
 
-print('Server listening....')
+class ClientThread(threading.Thread):
+    def __init__(self, IP, PORT, SOCK):
+        threading.Thread.__init__(self)
+        self.IP = IP
+        self.PORT = PORT
+        self.SOCK = SOCK
+        print("New thread started for " + IP + ":" + str(PORT))
+
+    def run(self):
+        filename='ServerAccessKey.json'
+        f = open(filename, 'rb')
+        while True:
+            data = f.read(BUFFER_SIZE)
+            while (data):
+                self.SOCK.send(data)
+                # print('Sent ',repr(data))
+                data = f.read(BUFFER_SIZE)
+            if not data:
+                f.close()
+                self.SOCK.close()
+                break
+
+tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+tcpsock.bind((TCP_IP, TCP_PORT))
+threads = []
 
 while True:
-    conn, addr = s.accept()     # Establish connection with client.
-    print('Got connection from', addr)
-    data = conn.recv(1024)
-    print('Server received', repr(data))
+    tcpsock.listen(5)
+    print("Waiting for incoming connections...")
+    (CONN, (IP,PORT)) = tcpsock.accept()
+    print('Got connection from ', (IP, PORT))
+    newthread = ClientThread(IP, PORT, CONN)
+    newthread.start()
+    threads.append(newthread)
 
-    filename='ServerAccessKey.json'
-    f = open(filename,'rb')
-    l = f.read(1024)
-    while (l):
-       conn.send(l)
-       print('Sent ',repr(l))
-       l = f.read(1024)
-    f.close()
-
-    print('Done sending')
-    conn.send('\nThank you for connecting'.encode('utf-8'))
-    conn.close()
+for t in threads:
+    t.join()

@@ -1,25 +1,47 @@
-import socket
+import socket, sys
 
-s = socket.socket()
-host = socket.gethostbyname(socket.gethostname())
-print(host)
-port = 9001
+TCP_IP = socket.gethostbyname(socket.gethostname())
+TCP_PORT = 9001
+BUFFER_SIZE = 1024
 
-s.connect((host, port))
-s.send("Hello server!".encode('utf-8'))
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+    s.connect((TCP_IP, TCP_PORT))
+except ConnectionRefusedError as err:
+    print(f"[SERVER NOT ACTIVE]: Error: {err}")
+    sys.exit(0)
 
-with open('received_file.json', 'wb') as f:
-    print('file opened')
+def createFile():
+    with open('received_file.json', 'wb') as f:
+        print('file opened')
+        while True:
+            #print('receiving data...')
+            data = s.recv(BUFFER_SIZE)
+            print(f'data={data}')
+            if not data:
+                f.close()
+                break
+            # write data to a file
+            f.write(data)
+
+    print('Successfully get the file')
+    s.close()
+    print('connection closed')
+
+def doNothing():
+    print("boooş")
+    sys.exit(0)
+
+if __name__ == "__main__":
     while True:
-        print('receiving data...')
-        data = s.recv(1024)
-        print('data=%s', (data))
-        if not data:
+        chooise = input("Enter the action you want to take: \n 1. Check File \n 2. Do Nothing \n Chooise: ")
+        if chooise == '1':
+            createFile()
             break
-        # write data to a file
-        f.write(data)
-
-f.close()
-print('Successfully get the file')
-s.close()
-print('connection closed')
+        elif chooise == '2':
+            doNothing()
+            break
+        elif chooise == 'q':
+            sys.exit(0)
+        else:
+            print("Choose one of the actions shown. Or press 'q' to exit.")
