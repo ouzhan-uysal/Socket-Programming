@@ -6,3 +6,6 @@ venv/
 
 # JSON file
 *.json
+
+# Log File
+*.log
