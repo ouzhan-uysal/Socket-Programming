@@ -1,7 +1,6 @@
 # multi threading tcp file transfer
 
-import socket
-import threading
+import socket, threading, logging, time
 
 TCP_HOST = socket.gethostbyname(socket.gethostname())
 TCP_PORT = 9001
@@ -103,11 +102,29 @@ class TCP_SERVER(threading.Thread):
                 self.conn.close()
                 break
 
+    def doNothing(self):
+        print("Do Nothing")
+        # while True:
+        #     data = self.conn.recv(BUFFER_SIZE)
+        #     if data:
+        #         data = int(data)
+        #         msg = conn.recv(data).decode('utf-8')
+        #         print(f"[{self.addr}]: {msg}")
+        #         conn.send(data.encode('utf-8'))
+        #     else:
+        #         break
+        # conn.close()
+
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] Thread:%(threadName)-10s Message:%(message)s')
     print("[STARTING]: Server is starting...")
     TCP_SOCKET.listen(5)
     while True:
-        print(f"\n[LISTENING]: Server is listening on {TCP_HOST}")
+        print(f"\n[LISTENING]: Server is listening on {TCP_HOST}\n")
         conn, addr = TCP_SOCKET.accept()
-        threading.Thread(args=(conn, addr)).start()
+        data = conn.recv(BUFFER_SIZE).decode('utf-8')
+        if data == 'Check File':
+            threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).checkFile, name="Dosya indirme", daemon=True).start()
+        elif data == 'boş yap':
+            threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).doNothing, name="Hiçbir şey yapma", daemon=True).start()
         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")

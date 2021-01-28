@@ -13,6 +13,7 @@ def handler_client(conn, addr):
     while True:
         try:
             data = conn.recv(BUFFER_SIZE)
+            print(f"Data: {data}")
             if data:
                 data = int(data)
                 msg = conn.recv(data).decode('utf-8')

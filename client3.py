@@ -12,13 +12,13 @@ except ConnectionRefusedError as err:
     sys.exit(0)
 
 def createFile():
+    s.send("Check File".encode('utf-8'))
     with open('received_file.json', 'wb') as f:
         print('file opened')
         try:
             while True:
-                #print('receiving data...')
                 data = s.recv(BUFFER_SIZE)
-                print(f'data={data}')
+                # print(f'data={data}')
                 if not data:
                     f.close()
                     break
@@ -34,7 +34,7 @@ def createFile():
     print('connection closed')
 
 def doNothing():
-    s.send("Hello server!".encode('utf-8'))
+    s.send("boş yap".encode('utf-8'))
     sys.exit(0)
 
 if __name__ == "__main__":
