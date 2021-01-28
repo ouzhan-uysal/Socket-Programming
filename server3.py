@@ -116,7 +116,11 @@ class TCP_SERVER(threading.Thread):
         # conn.close()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] Thread:%(threadName)-10s Message:%(message)s')
+    # Registry of logs
+    error_handler = logging.FileHandler("logs/ERROR.log")
+    debug_handler = logging.FileHandler("logs/DEBUG.log")
+    logging.basicConfig(level=logging.DEBUG, handlers=[error_handler, debug_handler], format='[%(levelname)s] Thread:%(threadName)-10s Message:%(message)s')
+
     print("[STARTING]: Server is starting...")
     TCP_SOCKET.listen(5)
     while True:
