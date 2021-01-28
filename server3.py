@@ -13,41 +13,43 @@ TCP_SOCKET.bind((TCP_HOST, TCP_PORT))
 threads = []    # 1. Nesil kullanıyor
 
 # --- 1. Nesil ---
-class ClientThread(threading.Thread):
-    def __init__(self, ADDR, SOCK):
-        threading.Thread.__init__(self)
-        self.IP = IP
-        self.PORT = PORT
-        self.SOCK = SOCK
-        print(f"[NEW CONNECTION]: Got connection from {ADDR}")
+# class ClientThread(threading.Thread):
+#     def __init__(self, ADDR, SOCK):
+#         threading.Thread.__init__(self)
+#         self.IP = IP
+#         self.PORT = PORT
+#         self.SOCK = SOCK
+#         print(f"[NEW CONNECTION]: Got connection from {ADDR}")
 
-    def run(self):
-        filename='ServerAccessKey.json'
-        f = open(filename, 'rb')
-        while True:
-            data = f.read(BUFFER_SIZE)
-            while data:
-                self.SOCK.send(data)
-                #print('Sent ',repr(data))
-                data = f.read(BUFFER_SIZE)
-            if not data:
-                f.close()
-                self.SOCK.close()
-                break
+#     def run(self):
+#         filename='ServerAccessKey.json'
+#         f = open(filename, 'rb')
+#         while True:
+#             data = f.read(BUFFER_SIZE)
+#             while data:
+#                 self.SOCK.send(data)
+#                 #print('Sent ',repr(data))
+#                 data = f.read(BUFFER_SIZE)
+#             if not data:
+#                 f.close()
+#                 self.SOCK.close()
+#                 break
 
-if __name__=="__main__":
-    print("[STARTING]: Server is starting...")
-    while True:
-        TCP_SOCKET.listen(5)
-        print("Waiting for incoming connections...")
-        (CONN, ADDR) = TCP_SOCKET.accept() # ADDR == (IP,PORT)
-        print('Got connection from ', ADDR)
-        newthread = ClientThread(ADDR, CONN)
-        newthread.start()
-        threads.append(newthread)
+# if __name__=="__main__":
+#     print("[STARTING]: Server is starting...")
+#     while True:
+#         TCP_SOCKET.listen(5)
+#         print("Waiting for incoming connections...")
+#         (CONN, ADDR) = TCP_SOCKET.accept() # ADDR == (IP,PORT)
+#         print('Got connection from ', ADDR)
+#         newthread = ClientThread(ADDR, CONN)
+#         newthread.start()
+#         threads.append(newthread)
 
-    for t in threads:
-        t.join()
+#     for t in threads:
+#         t.join()
+
+
 
 # --- 2. Nesil ---
 # def handler_client(conn, addr):
@@ -69,7 +71,6 @@ if __name__=="__main__":
 #         except Exception as err:
 #             print(err)
 
-
 # if __name__ == "__main__":
 #     print("[STARTING]: Server is starting...")
 #     TCP_SOCKET.listen(5)
@@ -80,12 +81,13 @@ if __name__=="__main__":
 #         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
 
 
+
 # --- 3. Nesil
 class TCP_SERVER(threading.Thread):
-    def __init__(self, addr, conn):
+    def __init__(self, conn, addr):
         threading.Thread.__init__(self)
-        self.addr = addr
         self.conn = conn
+        self.addr = addr
         print(f"[NEW CONNECTION]: Got connection from {addr}")
 
     def checkFile(self):
@@ -94,9 +96,18 @@ class TCP_SERVER(threading.Thread):
         while True:
             data = f.read(BUFFER_SIZE)
             while data:
-                self.SOCK.send(data)
+                self.conn.send(data)
                 data = f.read(BUFFER_SIZE)
             if not data:
                 f.close()
-                self.SOCK.close()
+                self.conn.close()
                 break
+
+if __name__ == "__main__":
+    print("[STARTING]: Server is starting...")
+    TCP_SOCKET.listen(5)
+    while True:
+        print(f"\n[LISTENING]: Server is listening on {TCP_HOST}")
+        conn, addr = TCP_SOCKET.accept()
+        threading.Thread(args=(conn, addr)).start()
+        print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
