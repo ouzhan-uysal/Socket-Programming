@@ -90,6 +90,7 @@ class TCP_SERVER(threading.Thread):
         print(f"[NEW CONNECTION]: Got connection from {addr}")
 
     def checkFile(self):
+        logging.debug(f"[{self.addr}]: make a checkFile request.")
         filename='ServerAccessKey.json'
         f = open(filename, 'rb')
         while True:
@@ -103,6 +104,7 @@ class TCP_SERVER(threading.Thread):
                 break
 
     def doNothing(self):
+        logging.debug(f"[{self.addr}]: make a doNothing request.")
         print("Do Nothing")
         # while True:
         #     data = self.conn.recv(BUFFER_SIZE)
