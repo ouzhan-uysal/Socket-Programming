@@ -1,4 +1,4 @@
-# multi threading tcp file transfer
+# Multi Threading TCP File Transfer
 
 import socket, threading, logging, time
 
@@ -7,9 +7,9 @@ TCP_PORT = 9001
 BUFFER_SIZE = 1024
 
 TCP_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-TCP_SOCKET.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+TCP_SOCKET.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    # 
 TCP_SOCKET.bind((TCP_HOST, TCP_PORT))
-threads = []    # 1. Nesil kullanıyor
+# threads = []    # 1. Nesil kullanıyor
 
 # --- 1. Nesil ---
 # class ClientThread(threading.Thread):
@@ -81,7 +81,7 @@ threads = []    # 1. Nesil kullanıyor
 
 
 
-# --- 3. Nesil
+# --- 3. Nesil ---
 class TCP_SERVER(threading.Thread):
     def __init__(self, conn, addr):
         threading.Thread.__init__(self)
@@ -104,18 +104,52 @@ class TCP_SERVER(threading.Thread):
                 break
 
     def doNothing(self):
-        logging.debug(f"[{self.addr}]: make a doNothing request.")
-        print("Do Nothing")
+        # logging.debug(f"[{self.addr}]: make a doNothing request.")
+        filename='GoodBye.json'
+        f = open(filename, 'rb')
+        len_data = f.read(BUFFER_SIZE)
+        while len_data:
+            try:
+                len_data = f.read(BUFFER_SIZE)
+                # data = self.conn.recv(BUFFER_SIZE)
+                # if data:
+                #     data = int(data)
+                #     msg = self.conn.recv(data).decode('utf-8')
+
+                #     print(f"[{addr}]:{msg}")
+                #     self.conn.send(data.encode('utf-8'))
+                # else:
+                #     break
+
+            except ConnectionResetError as err:
+                print(f"[DISCONNECT]: {addr} disconnected.")
+                print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}")
+                break
+        f.close()
+        self.conn.send('\nThank you for connecting'.encode('utf-8'))
+        self.conn.close()
+
+    def redirectToExit(self):
+        pass
+        # logging.debug(f"[{self.addr}] is redirecting to exit.")
+        # self.conn.send('Thanks for the connection. Goodbye now.'.encode('utf-8'))
+        # self.conn.close()
         # while True:
-        #     data = self.conn.recv(BUFFER_SIZE)
-        #     if data:
-        #         data = int(data)
-        #         msg = conn.recv(data).decode('utf-8')
-        #         print(f"[{self.addr}]: {msg}")
-        #         conn.send(data.encode('utf-8'))
-        #     else:
+        #     try:
+        #         data = self.conn.recv(BUFFER_SIZE).decode('utf-8')
+        #         print(data)
+        #         if data:
+        #             len_data = int(data)
+        #             self.conn.send('Thanks for the connection.'.encode('utf-8'))
+        #         else:
+        #             break
+
+        #     except (ConnectionResetError, ConnectionAbortedError) as err:
+        #         print(f"[DISCONNECT]: {addr} disconnected.")
+        #         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}")
         #         break
-        # conn.close()
+        # self.conn.close()
+
 
 if __name__ == "__main__":
     # Registry of logs
@@ -128,9 +162,17 @@ if __name__ == "__main__":
     while True:
         print(f"\n[LISTENING]: Server is listening on {TCP_HOST}\n")
         conn, addr = TCP_SOCKET.accept()
-        data = conn.recv(BUFFER_SIZE).decode('utf-8')
-        if data == 'Check File':
-            threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).checkFile, name="Dosya indirme", daemon=True).start()
-        elif data == 'boş yap':
-            threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).doNothing, name="Hiçbir şey yapma", daemon=True).start()
-        print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
+        try: 
+            data = conn.recv(BUFFER_SIZE).decode('utf-8')
+            if data == 'Check File':
+                threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).checkFile, name="Dosya indirme").start()
+            elif data == 'boş yap':
+                threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).doNothing, name="Hiçbir şey yapma").start()
+            else:
+                conn.send('Thanks for the connection. Goodbye now.'.encode('utf-8'))
+                conn.close()
+            print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
+        
+        except Exception as err:
+            # logging.error(err)
+            conn.close()
