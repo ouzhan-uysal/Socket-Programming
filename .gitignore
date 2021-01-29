@@ -9,4 +9,4 @@ venv/
 
 # Log File
 logs/
-*.logs/
+*.logs
