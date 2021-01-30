@@ -102,6 +102,10 @@ class TCP_SERVER(threading.Thread):
                 f.close()
                 self.conn.close()
                 break
+        
+        print(f"[DISCONNECT]: {addr} disconnected.")
+        print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}\n")
+        
 
     def doNothing(self):
         # logging.debug(f"[{self.addr}]: make a doNothing request.")
@@ -128,6 +132,9 @@ class TCP_SERVER(threading.Thread):
         f.close()
         self.conn.send('\nThank you for connecting'.encode('utf-8'))
         self.conn.close()
+        
+        print(f"[DISCONNECT]: {addr} disconnected.")
+        print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}\n")
 
     def redirectToExit(self):
         pass
