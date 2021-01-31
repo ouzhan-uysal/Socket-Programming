@@ -1,9 +1,9 @@
-import socket, sys
+import socket, sys, json
+# from cPickle as pickle
 
 TCP_IP = socket.gethostbyname(socket.gethostname())
 TCP_PORT = 9001
 BUFFER_SIZE = 1024
-HEADERSIZE = 10
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
@@ -13,9 +13,10 @@ except ConnectionRefusedError as err:
     sys.exit(0)
 
 def createFile():
-    s.send("Check File".encode('utf-8'))
+    json_file = open('ServerAccessKey.json', 'rb')
+    json_data = json_file.read()
+    s.send(json_data)
     with open('received_file.json', 'wb') as f:
-        print('file opened')
         try:
             while True:
                 data = s.recv(BUFFER_SIZE)
@@ -35,7 +36,6 @@ def doNothing():
     s.send("boş yap".encode('utf-8'))
     
     with open('received_file.json', 'wb') as f:
-        print('file opened')
         try:
             while True:
                 data = s.recv(BUFFER_SIZE)

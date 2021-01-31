@@ -1,6 +1,6 @@
 # Multi Threading TCP File Transfer
 
-import socket, threading, logging, time
+import socket, threading, logging, time, json
 
 TCP_HOST = socket.gethostbyname(socket.gethostname())
 TCP_PORT = 9001
@@ -91,7 +91,7 @@ class TCP_SERVER(threading.Thread):
 
     def checkFile(self):
         logging.debug(f"[{self.addr}]: make a checkFile request.")
-        filename='ServerAccessKey.json'
+        filename='GoodBye.json'
         f = open(filename, 'rb')
         while True:
             data = f.read(BUFFER_SIZE)
@@ -170,15 +170,16 @@ if __name__ == "__main__":
         print(f"\n[LISTENING]: Server is listening on {TCP_HOST}\n")
         conn, addr = TCP_SOCKET.accept()
         try: 
-            data = conn.recv(BUFFER_SIZE).decode('utf-8')
-            if data == 'Check File':
-                threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).checkFile, name="Dosya indirme").start()
-            elif data == 'boş yap':
-                threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).doNothing, name="Hiçbir şey yapma").start()
-            else:
-                conn.send('Thanks for the connection. Goodbye now.'.encode('utf-8'))
-                conn.close()
-            print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
+            data = conn.recv(BUFFER_SIZE)
+            data = json.loads(data)
+            # if data == 'Check File':
+            #     threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).checkFile, name="Dosya indirme").start()
+            # elif data == 'boş yap':
+            #     threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).doNothing, name="Hiçbir şey yapma").start()
+            # else:
+            #     conn.send('Thanks for the connection. Goodbye now.'.encode('utf-8'))
+            #     conn.close()
+            # print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
         
         except Exception as err:
             # logging.error(err)
