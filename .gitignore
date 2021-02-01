@@ -8,4 +8,5 @@ venv/
 *.json
 
 # Log File
-logs/
+logs/DEBUG.log
+logs/ERROR.log
