@@ -1,7 +1,3 @@
-# Log File
-logs/
-*.logs
-
 # Virtual Environment
 venv/
 
@@ -10,3 +6,6 @@ venv/
 
 # JSON file
 *.json
+
+# Log File
+logs/
