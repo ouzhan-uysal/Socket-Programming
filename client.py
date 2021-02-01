@@ -13,10 +13,10 @@ except ConnectionRefusedError as err:
     sys.exit(0)
 
 def createFile():
-    json_file = open('ServerAccessKey.json', 'rb')
+    json_file = open('userFile/user_key.json', 'rb')
     json_data = json_file.read()
     s.send(json_data)
-    with open('received_file.json', 'wb') as f:
+    with open('userFile/received_file.json', 'wb') as f:
         try:
             while True:
                 data = s.recv(BUFFER_SIZE)
@@ -35,7 +35,7 @@ def createFile():
 def doNothing():
     s.send("boş yap".encode('utf-8'))
     
-    with open('received_file.json', 'wb') as f:
+    with open('userFile/received_file.json', 'wb') as f:
         try:
             while True:
                 data = s.recv(BUFFER_SIZE)
