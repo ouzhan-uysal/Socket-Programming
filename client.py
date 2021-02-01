@@ -5,21 +5,18 @@ TCP_IP = socket.gethostbyname(socket.gethostname())
 TCP_PORT = 9001
 BUFFER_SIZE = 1024
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
-    s.connect((TCP_IP, TCP_PORT))
+    sock.connect((TCP_IP, TCP_PORT))
 except ConnectionRefusedError as err:
     print(f"[SERVER NOT ACTIVE]: Error: {err}")
     sys.exit(0)
 
-def createFile():
-    json_file = open('userFile/user_key.json', 'rb')
-    json_data = json_file.read()
-    s.send(json_data)
+def checkFile():
     with open('userFile/received_file.json', 'wb') as f:
         try:
             while True:
-                data = s.recv(BUFFER_SIZE)
+                data = sock.recv(BUFFER_SIZE)
                 if not data:
                     f.close()
                     break
@@ -29,16 +26,14 @@ def createFile():
             print(f"Server is inactive. Program is closing..")
             sys.exit(0)
 
-    s.close()
-    print('connection closed')
+    sock.close()
+    print('Connection closed.')
 
 def doNothing():
-    s.send("boş yap".encode('utf-8'))
-    
     with open('userFile/received_file.json', 'wb') as f:
         try:
             while True:
-                data = s.recv(BUFFER_SIZE)
+                data = sock.recv(BUFFER_SIZE)
                 if not data:
                     f.close()
                     break
@@ -48,39 +43,34 @@ def doNothing():
             print(f"Server is inactive. Program is closing..")
             sys.exit(0)
 
-    s.close()
-    print('connection closed')
+    sock.close()
+    print('Connection closed.')
 
 def sendMsg():
-    s.send('Hello World'.encode('utf-8'))
+    sock.send('Hello World'.encode('utf-8'))
     while True:
-        data = s.recv(BUFFER_SIZE)
+        data = sock.recv(BUFFER_SIZE)
         if not data:
             break
-        data = s.recv(BUFFER_SIZE)
-    s.close
-    print('connection closed')
+        data = sock.recv(BUFFER_SIZE)
+    sock.close()
+    print('Connection closed.')
             
 
 if __name__ == "__main__":
+    json_file = open('userFile/user_key.json', 'rb')
+    json_data = json_file.read()
+    sock.send(json_data)    # Send json file to server
+    choice = input(sock.recv(BUFFER_SIZE).decode('utf-8'))
+    sock.send(choice.encode('utf-8'))   # answer server
     while True:
-        chooise = input(
-            " Enter the action you want to take:"+
-            "\n 1. Check File"+
-            "\n 2. Do Nothing"+
-            "\n 3. Send Message"+
-            "\n 4. Exit"+
-            "\n Chooise: ")
-        if chooise == '1':
-            createFile()
-            break
-        elif chooise == '2':
+        if choice == '1':
+            checkFile()
+            sys.exit(0)
+        elif choice == '2':
             doNothing()
-            break
-        elif chooise == '3':
-            sendMsg()
-            break
-        elif chooise == '4':
+            sys.exit(0)
+        elif choice == '3':
             sys.exit(0)
         else:
             print("Choose one of the actions shown.")

@@ -11,18 +11,14 @@ TCP_SOCKET.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 TCP_SOCKET.bind((TCP_HOST, TCP_PORT))
 TCP_SOCKET.listen(5)
 
-# Read access_keys
-access_keys = []
+# Read access_keys and permissions
+access_keys = {}
 with open('serverFile/access_keys.json') as ak_file:
     data = json.load(ak_file)
     for i in range(len(data["accessToken"])):
-        access_keys.append(data[f"accessToken"][i]["private_key"])
-    # for key, value in data["accessToken"][1].items():
-    #     print(f"{key}: {value}")
-    # print(data["accessToken"]["private_key"])
-    # access_keys.append(data)
-# print(access_keys)
-
+        key = data[f"accessToken"][i]["private_key"]
+        value = data[f"accessToken"][i]["permission"]
+        access_keys[key] = value
 
 class TCP_SERVER(threading.Thread):
     def __init__(self, conn, addr):
@@ -47,6 +43,7 @@ class TCP_SERVER(threading.Thread):
         
         print(f"[DISCONNECT]: {addr} disconnected.")
         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}\n")
+        self.conn.close()
         
 
     def doNothing(self):
@@ -78,27 +75,6 @@ class TCP_SERVER(threading.Thread):
         print(f"[DISCONNECT]: {addr} disconnected.")
         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}\n")
 
-    def redirectToExit(self):
-        pass
-        # logging.debug(f"[{self.addr}] is redirecting to exit.")
-        # self.conn.send('Thanks for the connection. Goodbye now.'.encode('utf-8'))
-        # self.conn.close()
-        # while True:
-        #     try:
-        #         data = self.conn.recv(BUFFER_SIZE).decode('utf-8')
-        #         print(data)
-        #         if data:
-        #             len_data = int(data)
-        #             self.conn.send('Thanks for the connection.'.encode('utf-8'))
-        #         else:
-        #             break
-
-        #     except (ConnectionResetError, ConnectionAbortedError) as err:
-        #         print(f"[DISCONNECT]: {addr} disconnected.")
-        #         print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 2}")
-        #         break
-        # self.conn.close()
-
 
 if __name__ == "__main__":
     # Registry of logs
@@ -112,24 +88,37 @@ if __name__ == "__main__":
         print(f"\n[LISTENING]: Server is listening on {TCP_HOST}\n")
         conn, addr = TCP_SOCKET.accept()
         try:
-            data = conn.recv(BUFFER_SIZE)
-            data = json.loads(data)
-            print(data)
+            data = conn.recv(BUFFER_SIZE)   # Client'ten gelen json dosyası
+            data = json.loads(data)         # Json dosyasının okunması
             access_permission = data["private_key"] in access_keys
+            # Kullanıcının private_key'i kontrol edilir ona göre yetki verilir.
             if access_permission:
-                # Bu kısımdan sonra server client'e hangi işlemi yapması gerektiğini soracak ardından kullanıcının key'İnin yetsini var ise erişimi onaylayacak yoksa erişimi reddedecek.
-                if data == 'Check File':
+                # Burada kullanıcıya yapmak istediği işlem sorulur. Eğer istediği işleme private_key'inin yetkisi varsa işlem yapılır yoksa tekrar sorulur veya bağlantı kesilir.
+                conn.send("Make your choice.\n1. Check File\n2. doNothing\n3. Exit\n\nYour Choice: ".encode("utf-8"))   # ask client
+                choice = int(conn.recv(BUFFER_SIZE).decode('utf-8'))
+                # print(f"Kullanıcının Seçimi: {choice}")
+                access_authority = choice in access_keys[data["private_key"]]
+                
+                if choice == 1 and access_authority:
                     threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).checkFile, name="Dosya indirme").start()
-                elif data == 'boş yap':
+
+                elif choice == 2 and access_authority:
                     threading.Thread(target=TCP_SERVER(conn=conn, addr=addr).doNothing, name="Hiçbir şey yapma").start()
-                else:
+
+                elif choice == 3 and access_authority:
                     conn.send('Thanks for the connection. Goodbye now.'.encode('utf-8'))
                     conn.close()
+
+                else:
+                    conn.send('Access Denied.'.encode('utf-8'))
+                    conn.close()
+
                 print(f"[ACTIVE CONNECTIONS]: {threading.activeCount() - 1}")
+
             else:
                 conn.send('Access Denied.'.encode('utf-8'))
                 conn.close()
-        
+
         except Exception as err:
             # logging.error(err)
             conn.close()
