@@ -28,7 +28,7 @@ class TCP_SERVER(threading.Thread):
         print(f"[NEW CONNECTION]: Got connection from {addr}")
 
     def checkFile(self):
-        logging.debug(f"[{self.addr}]: make a checkFile request.")
+        # logging.debug(f"[{self.addr}]: make a checkFile request.")
         filename='serverFile/GoodBye.json'
         f = open(filename, 'rb')
         while True:
