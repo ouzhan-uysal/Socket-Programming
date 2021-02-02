@@ -13,7 +13,7 @@ except ConnectionRefusedError as err:
     sys.exit(0)
 
 def checkFile():
-    with open('userFile/received_file.json', 'wb') as f:
+    with open('received_file.json', 'wb') as f:
         try:
             while True:
                 data = sock.recv(BUFFER_SIZE)
@@ -29,32 +29,32 @@ def checkFile():
     sock.close()
     print('Connection closed.')
 
-def doNothing():
-    with open('userFile/received_file.json', 'wb') as f:
-        try:
-            while True:
-                data = sock.recv(BUFFER_SIZE)
-                if not data:
-                    f.close()
-                    break
-                f.write(data)
+# def doNothing():
+#     with open('received_file.json', 'wb') as f:
+#         try:
+#             while True:
+#                 data = sock.recv(BUFFER_SIZE)
+#                 if not data:
+#                     f.close()
+#                     break
+#                 f.write(data)
 
-        except ConnectionResetError as err:
-            print(f"Server is inactive. Program is closing..")
-            sys.exit(0)
+#         except ConnectionResetError as err:
+#             print(f"Server is inactive. Program is closing..")
+#             sys.exit(0)
 
-    sock.close()
-    print('Connection closed.')
+#     sock.close()
+#     print('Connection closed.')
 
-def sendMsg():
-    sock.send('Hello World'.encode('utf-8'))
-    while True:
-        data = sock.recv(BUFFER_SIZE)
-        if not data:
-            break
-        data = sock.recv(BUFFER_SIZE)
-    sock.close()
-    print('Connection closed.')
+# def sendMsg():
+#     sock.send('Hello World'.encode('utf-8'))
+#     while True:
+#         data = sock.recv(BUFFER_SIZE)
+#         if not data:
+#             break
+#         data = sock.recv(BUFFER_SIZE)
+#     sock.close()
+#     print('Connection closed.')
             
 
 if __name__ == "__main__":
@@ -64,13 +64,17 @@ if __name__ == "__main__":
     choice = input(sock.recv(BUFFER_SIZE).decode('utf-8'))
     sock.send(choice.encode('utf-8'))   # answer server
     while True:
-        if choice == '1':
-            checkFile()
+        try:
+            while True:
+                data = sock.recv(BUFFER_SIZE).decode('utf-8')
+                if not data:
+                    break
+                print(data)
+        except ConnectionResetError as err:
+            print(f"Server is inactive. Program is closing..")
             sys.exit(0)
-        elif choice == '2':
-            doNothing()
-            sys.exit(0)
-        elif choice == '3':
-            sys.exit(0)
-        else:
-            print("Choose one of the actions shown.")
+        except OSError as err:
+            # print(f"Neden girildiğini bilmediğimiz Docker gibi plaftormlarda karşımıza çıkmayacağı söylenen hata. Error: {err}"),
+            break
+        sock.close()
+        print("Connecion Closed.")
